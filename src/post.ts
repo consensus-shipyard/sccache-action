@@ -27,12 +27,10 @@ export const saveCache = async () => {
 			console.log(`Aborting, shouldUpdateCache: ${shouldUpdateCache}`);
 			return;
 		}
-		let cacheKey = `${core.getInput('cache-key')}-`;
+		let cacheKey = `${core.getInput('cache-key')}-${core.getInput('cache-suffix')}`;
 		let shouldUseDate = core.getBooleanInput('cache-date');
 		if (shouldUseDate) {
-			cacheKey += new Date().toISOString();
-		} else {
-			cacheKey += "latest";
+			cacheKey += `-${new Date().toISOString()}`;
 		}
 		console.log(`Using cacheKey: ${cacheKey}`);
 		await cache.saveCache([`${process.env.HOME}/.cache/sccache`, `${process.env.HOME}/Library/Caches/Mozilla.sccache`], cacheKey);

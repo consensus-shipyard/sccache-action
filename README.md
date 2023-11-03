@@ -11,6 +11,8 @@ This repository provides GitHub Actions which enables projects to cache the comp
   with:
     # Optional
     cache-key: sccache-ubuntu-latest
+    # Optional, the matched is done on the `${cache-key}-` prefix, but a suffix can make uploads unique
+    cache-suffix: ${{ hashFiles(...) }}
     # Optional, whether or not saving the cache
     cache-save: true
     # Optional whether or not updating cache when hit
