@@ -2,8 +2,14 @@ name: "sccache action - speedup Rust GitHub actions"
 description: "A GitHub Action that speeds up Rust compilation with sccache."
 inputs:
   cache-key:
-    description: "The cache key."
+    description: "The cache key prefix, on which partial matches are made"
     default: "sccache"
+  cache-suffix:
+    description: "The cache key suffix, which can make keys unique (e.g. hash of lock file)"
+    default: ""
+  cache-date:
+    description: "Whether to append a datetime string to the cache to make it unique"
+    default: true
   cache-save:
     description: "A Flag that indicates whether or not saving the cache"
     default: true
