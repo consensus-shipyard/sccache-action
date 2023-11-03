@@ -11,10 +11,14 @@ This repository provides GitHub Actions which enables projects to cache the comp
   with:
     # Optional
     cache-key: sccache-ubuntu-latest
+    # Optional, the matched is done on the `${cache-key}-` prefix, but a suffix can make uploads unique
+    cache-suffix: ${{ hashFiles(...) }}
     # Optional, whether or not saving the cache
     cache-save: true
     # Optional whether or not updating cache when hit
     cache-update: true
+    # Optional whether to put the date-time string into the cache key
+    cache-date: true
     # Optional,  e.g. v0.3.0
     release-name: latest
     # Optional
@@ -23,3 +27,11 @@ This repository provides GitHub Actions which enables projects to cache the comp
 
 - The `release-name` parameter is the version name listed in [sccache's release page](https://github.com/mozilla/sccache/releases).
 - The `arch` parameter is the string included in the binary release `.tar.gz`. For ubuntu, use "x86_64-unknown-linux-musl".
+
+## Build
+
+Make sure you have `ncc` installed: `sudo npm i -g @vercel/ncc`
+
+```
+npm run build:main && npm run build:post
+```
