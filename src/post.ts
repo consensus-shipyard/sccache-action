@@ -10,16 +10,21 @@ export const showStat = async () => {
 
 export const saveCache = async () => {
 	try {
+		let cacheKey = `${core.getInput('cache-key')}-${core.getInput('cache-suffix')}`;
+
 		let shouldSaveCache = core.getBooleanInput('cache-save');
 		if (!shouldSaveCache) {
 			console.log(`Aborting, shouldSaveCache: ${shouldSaveCache}`);
 			return;
 		}
+
 		let shouldUpdateCache = core.getBooleanInput('cache-update');
 		if (!shouldUpdateCache) {
-			const cacheKey = core.getState(State.RestoredCacheKey);
-			console.log(`cacheKey: ${cacheKey}`);
-			if (!cacheKey) {
+			const restoredCacheKey = core.getState(State.RestoredCacheKey);
+			console.log(`restoredCacheKey: ${restoredCacheKey}`);
+			if (!restoredCacheKey) {
+				shouldUpdateCache = true;
+			} else if (!restoredCacheKey.startsWith(cacheKey)) {
 				shouldUpdateCache = true;
 			}
 		}
@@ -27,11 +32,12 @@ export const saveCache = async () => {
 			console.log(`Aborting, shouldUpdateCache: ${shouldUpdateCache}`);
 			return;
 		}
-		let cacheKey = `${core.getInput('cache-key')}-${core.getInput('cache-suffix')}`;
+
 		let shouldUseDate = core.getBooleanInput('cache-date');
 		if (shouldUseDate) {
 			cacheKey += `-${new Date().toISOString()}`;
 		}
+
 		console.log(`Using cacheKey: ${cacheKey}`);
 		await cache.saveCache([`${process.env.HOME}/.cache/sccache`, `${process.env.HOME}/Library/Caches/Mozilla.sccache`], cacheKey);
 	} catch (err: any) {

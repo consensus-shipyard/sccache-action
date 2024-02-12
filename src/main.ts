@@ -73,9 +73,9 @@ export const setupRust = async () => {
 	writeFileSync(`${process.env.HOME}/.cargo/config`, `[build]\nrustc-wrapper = "sccache"\n`);
 };
 
-export const restoreCache = async (restoreKey: string) => {
+export const restoreCache = async (primaryKey: string, restoreKey: string) => {
 	const restoredCacheKey = await cache.restoreCache(
-		[`${process.env.HOME}/.cache/sccache`, `${process.env.HOME}/Library/Caches/Mozilla.sccache`], restoreKey, [`${restoreKey}-`]);
+		[`${process.env.HOME}/.cache/sccache`, `${process.env.HOME}/Library/Caches/Mozilla.sccache`], primaryKey, [`${restoreKey}-`]);
 	if (restoredCacheKey) {
 		core.info(`Cache restored from ${restoredCacheKey}.`);
 		core.saveState(State.RestoredCacheKey, restoredCacheKey);
@@ -91,7 +91,12 @@ export const resetStat = async () => {
 export const run = async () => {
 	try {
 		const restoreKey = core.getInput('cache-key');
+		const suffixKey = core.getInput('cache-suffix');
+		const primaryKey = `${restoreKey}-${suffixKey}`;
+
+		console.log(`Using primaryKey: ${primaryKey}`);
 		console.log(`Using restoreKey: ${restoreKey}`);
+
 		const releaseName = core.getInput('release-name');
 		let arch = core.getInput('arch');
 		if (!arch) {
@@ -107,7 +112,7 @@ export const run = async () => {
 		}
 		await download(releaseName, arch);
 		await setupRust();
-		await restoreCache(restoreKey);
+		await restoreCache(primaryKey, restoreKey);
 		await resetStat();
 	} catch (err: any) {
 		core.setFailed(err.message);
